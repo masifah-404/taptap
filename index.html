@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clicker Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        .game-container {
+            text-align: center;
+        }
+
+        #score {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        #click-button {
+            padding: 15px 30px;
+            font-size: 24px;
+            cursor: pointer;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        #click-button:hover {
+            background-color: #45a049;
+        }
+
+        #timer, #high-score {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-size: 24px;
+            color: #ff5733; /* Fun message color */
+        }
+
+        select {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <div id="score">0</div>
+        <button id="click-button">Tap Me!</button>
+        <div id="high-score">High Score: 0</div>
+        <select id="time-select">
+            <option value="10">10 Seconds</option>
+            <option value="30">30 Seconds</option>
+            <option value="60">1 Minute</option>
+        </select>
+        <div id="timer"></div>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let score = 0;
+            let highScore = 0;
+            let interval;
+            const scoreDisplay = document.getElementById('score');
+            const clickButton = document.getElementById('click-button');
+            const highScoreDisplay = document.getElementById('high-score');
+            const timeSelect = document.getElementById('time-select');
+            const timerDisplay = document.getElementById('timer');
+            const messageDisplay = document.getElementById('message');
+
+            // Click event for the button
+            clickButton.addEventListener('click', () => {
+                score++;
+                scoreDisplay.textContent = score;
+            });
+
+            // Start the game based on selected time
+            timeSelect.addEventListener('change', startGame);
+
+            function startGame() {
+                score = 0;
+                scoreDisplay.textContent = score;
+                messageDisplay.textContent = '';
+                clearInterval(interval);
+                timerDisplay.textContent = '';
+                
+                const timeLimit = parseInt(timeSelect.value);
+                const endTime = Date.now() + timeLimit * 1000;
+
+                interval = setInterval(() => {
+                    const remainingTime = Math.round((endTime - Date.now()) / 1000);
+                    timerDisplay.textContent = `Time Remaining: ${remainingTime} seconds`;
+                    
+                    if (remainingTime <= 0) {
+                        clearInterval(interval);
+                        checkHighScore();
+                        displayMessage();
+                    }
+                }, 1000);
+            }
+
+            // Check high score
+            function checkHighScore() {
+                if (score > highScore) {
+                    highScore = score;
+                    highScoreDisplay.textContent = `High Score: ${highScore}`;
+                }
+            }
+
+            // Display fun messages based on score
+            function displayMessage() {
+                let message;
+                if (score === 0) {
+                    message = "Oh no! You didn't tap at all!";
+                } else if (score <= 5) {
+                    message = "Keep trying! You can do better!";
+                } else if (score <= 10) {
+                    message = "Not bad! You're getting the hang of it!";
+                } else if (score <= 20) {
+                    message = "Great job! You're a tapper master!";
+                } else {
+                    message = "Incredible! You're a tapping legend!";
+                }
+                messageDisplay.textContent = message;
+            }
+        });
+    </script>
+
+</body>
+</html>
